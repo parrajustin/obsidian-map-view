@@ -28,13 +28,14 @@ Can add custom markers with
 }
 ```
 
-
 # Obsidian.md Map View
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/esm7)
 
 <!--ts-->
 
+-   [Custom stuff](#custom-stuff)
+    -   [Custom Markers](#custom-markers)
 -   [Obsidian.md Map View](#obsidianmd-map-view)
     -   [Intro](#intro)
     -   [With Obsidian Mobile](#with-obsidian-mobile)
@@ -80,7 +81,7 @@ Can add custom markers with
         -   [2.0.0](#200)
 
 <!-- Created by https://github.com/ekalinin/github-markdown-toc -->
-<!-- Added by: erez, at: Fri Jul 28 09:51:19 AM IDT 2023 -->
+<!-- Added by: jrparra, at: Fri Feb  2 10:12:37 PM PST 2024 -->
 
 <!--te-->
 

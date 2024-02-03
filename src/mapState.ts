@@ -8,7 +8,7 @@ export type CustomMarkerState = {
     lat: number;
     lng: number;
     iconOptions: leaflet.ExtraMarkers.IconOptions;
-    docId: string
+    docId: string;
 };
 
 /** Represents a logical state of the map, in separation from the map display */
@@ -30,7 +30,7 @@ export type MapState = {
     lock?: boolean;
 
     /** Custom settings */
-    customMarker?: CustomMarkerState[]
+    customMarker?: CustomMarkerState[];
 };
 
 /** Fields that are deprecated */
@@ -117,7 +117,7 @@ export function stateFromParsedUrl(obj: any) {
         ...(obj.embeddedHeight && {
             embeddedHeight: parseInt(obj.embeddedHeight),
         }),
-        customMarker: obj?.customMarker
+        customMarker: obj?.customMarker,
     } as MapState;
 }
 

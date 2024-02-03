@@ -4,7 +4,11 @@ import 'leaflet-extra-markers';
 import 'leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css';
 
 import { PluginSettings } from 'src/settings';
-import { getIconFromOptions, getIconFromRules, IconCache } from 'src/markerIcons';
+import {
+    getIconFromOptions,
+    getIconFromRules,
+    IconCache,
+} from 'src/markerIcons';
 import * as consts from 'src/consts';
 import * as regex from 'src/regex';
 import { djb2Hash } from 'src/utils';
@@ -149,13 +153,13 @@ export class CustomMarker extends BaseGeoLayer {
     }
 
     generateId() {
-        this.id = djb2Hash(
-            `${this.file.name}
+        this.id =
+            djb2Hash(
+                `${this.file.name}
             ${this.location.lat.toString()}
-            ${this.location.lng.toString()}`,
-        ) + this.markerConfig
-        this.location.lat.toString() +
-        this.location.lng.toString(); 
+            ${this.location.lng.toString()}`
+            ) + this.markerConfig;
+        this.location.lat.toString() + this.location.lng.toString();
     }
 
     getBounds(): leaflet.LatLng[] {
@@ -267,7 +271,10 @@ export function finalizeMarkers(
                 iconCache
             );
         } else if (marker instanceof CustomMarker) {
-            marker.icon = getIconFromOptions(marker.markerConfig.iconOptions, iconCache);
+            marker.icon = getIconFromOptions(
+                marker.markerConfig.iconOptions,
+                iconCache
+            );
         } else {
             throw 'Unsupported object type ' + marker.constructor.name;
         }

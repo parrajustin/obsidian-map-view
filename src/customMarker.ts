@@ -1,11 +1,11 @@
-import { App, TFile } from "obsidian";
-import { MapState } from "./mapState";
-import { CustomMarker } from "./markers";
+import { App, TFile } from 'obsidian';
+import { MapState } from './mapState';
+import { CustomMarker } from './markers';
 
 /**
  * Create custom markers from the input map state.
- * @param state 
- * @returns 
+ * @param state
+ * @returns
  */
 export function createCustomMarkers(app: App, state: MapState): CustomMarker[] {
     if (state.customMarker == undefined) {
@@ -13,7 +13,6 @@ export function createCustomMarkers(app: App, state: MapState): CustomMarker[] {
     }
     const results: CustomMarker[] = [];
     for (const marker of state.customMarker) {
-
         const file = app.vault.getAbstractFileByPath(marker.docId);
         if (file instanceof TFile) {
             results.push(new CustomMarker(marker, file));

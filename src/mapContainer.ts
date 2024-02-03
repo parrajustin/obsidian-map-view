@@ -645,16 +645,16 @@ export class MapContainer {
                     );
                 newMarkersMap.set(marker.id, marker);
             } else if (marker instanceof CustomMarker) {
-                    // New marker - create it
-                    marker.geoLayer = this.newLeafletCustomMarker(marker);
-                    markersToAdd.push(marker.geoLayer);
-                    if (newMarkersMap.get(marker.id))
-                        console.log(
-                            'Map view: warning, marker ID',
-                            marker.id,
-                            'already exists, please open an issue if you see this.'
-                        );
-                    newMarkersMap.set(marker.id, marker);
+                // New marker - create it
+                marker.geoLayer = this.newLeafletCustomMarker(marker);
+                markersToAdd.push(marker.geoLayer);
+                if (newMarkersMap.get(marker.id))
+                    console.log(
+                        'Map view: warning, marker ID',
+                        marker.id,
+                        'already exists, please open an issue if you see this.'
+                    );
+                newMarkersMap.set(marker.id, marker);
             }
         }
         for (let [key, value] of this.display.markers) {
@@ -840,7 +840,7 @@ export class MapContainer {
     ) {
         if (this.settings.showNoteNamePopup) {
             let content = `<p class="map-view-marker-name">${marker.markerConfig.id}</p>`;
-                content += `<p class="map-view-marker-sub-name">${marker.markerConfig.desc}</p>`;
+            content += `<p class="map-view-marker-sub-name">${marker.markerConfig.desc}</p>`;
             mapMarker
                 .bindPopup(content, {
                     closeButton: true,
