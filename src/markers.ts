@@ -4,11 +4,12 @@ import 'leaflet-extra-markers';
 import 'leaflet-extra-markers/dist/css/leaflet.extra-markers.min.css';
 
 import { PluginSettings } from 'src/settings';
-import { getIconFromRules, IconCache } from 'src/markerIcons';
+import { getIconFromOptions, getIconFromRules, IconCache } from 'src/markerIcons';
 import * as consts from 'src/consts';
 import * as regex from 'src/regex';
 import { djb2Hash } from 'src/utils';
 import wildcard from 'wildcard';
+import { CustomMarkerState } from './mapState';
 
 type MarkerId = string;
 
@@ -104,6 +105,57 @@ export class FileMarker extends BaseGeoLayer {
             this.fileLocation,
             this.fileLine
         );
+    }
+
+    getBounds(): leaflet.LatLng[] {
+        return [this.location];
+    }
+}
+
+export class CustomMarker extends BaseGeoLayer {
+    public location: leaflet.LatLng;
+    public icon?: leaflet.Icon<leaflet.ExtraMarkers.IconOptions>;
+
+    /**
+     * Construct a new FileMarker object
+     * @param file The file the pin comes from
+     */
+    constructor(public markerConfig: CustomMarkerState, file: TFile) {
+        super(file);
+        this.layerType = 'fileMarker';
+        this.location = leaflet.latLng(markerConfig.lat, markerConfig.lng);
+        this.generateId();
+    }
+
+    isSame(other: BaseGeoLayer): boolean {
+        return (
+            other instanceof FileMarker &&
+            this.file.name === other.file.name &&
+            this.location.toString() === other.location.toString() &&
+            this.fileLocation === other.fileLocation &&
+            this.fileLine === other.fileLine &&
+            this.extraName === other.extraName &&
+            this.icon?.options?.iconUrl === other.icon?.options?.iconUrl &&
+            // @ts-ignore
+            this.icon?.options?.icon === other.icon?.options?.icon &&
+            // @ts-ignore
+            this.icon?.options?.iconColor === other.icon?.options?.iconColor &&
+            // @ts-ignore
+            this.icon?.options?.markerColor ===
+                other.icon?.options?.markerColor &&
+            // @ts-ignore
+            this.icon?.options?.shape === other.icon?.options?.shape
+        );
+    }
+
+    generateId() {
+        this.id = djb2Hash(
+            `${this.file.name}
+            ${this.location.lat.toString()}
+            ${this.location.lng.toString()}`,
+        ) + this.markerConfig
+        this.location.lat.toString() +
+        this.location.lng.toString(); 
     }
 
     getBounds(): leaflet.LatLng[] {
@@ -214,6 +266,8 @@ export function finalizeMarkers(
                 settings.markerIconRules,
                 iconCache
             );
+        } else if (marker instanceof CustomMarker) {
+            marker.icon = getIconFromOptions(marker.markerConfig.iconOptions, iconCache);
         } else {
             throw 'Unsupported object type ' + marker.constructor.name;
         }

@@ -1,3 +1,34 @@
+# Custom stuff
+
+## Custom Markers
+
+Can add custom markers with
+
+```
+{
+  "name": "Default",
+  "mapZoom": 12,
+  "centerLat": 41.4036299,
+  "centerLng": 2.1743558,
+  "query": "",
+  "chosenMapSource": 0,
+  "customMarker": [
+    {
+      "id": "start",
+      "lat": 41.4036299,
+      "lng": 2.1743558,
+      "desc": "desc",
+      "iconOptions": {
+        "icon": "fa-1",
+        "prefix": "fas",
+        "markerColor": "blue"
+      }
+    }
+  ]
+}
+```
+
+
 # Obsidian.md Map View
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/esm7)

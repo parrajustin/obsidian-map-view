@@ -174,7 +174,12 @@ export default class MapViewPlugin extends Plugin {
                 let state = null;
                 try {
                     const rawStateObj = JSON.parse(source);
+                    console.log("rawStateObj", rawStateObj);
                     state = stateFromParsedUrl(rawStateObj);
+                    for (let i = 0; i < state.customMarker.length; i++) {
+                        state.customMarker[i].docId = ctx.sourcePath;
+                    }
+                    console.log("state", state);
                 } catch (e) {
                     el.setText(
                         'Map View is unable to parse this saved state: ' +

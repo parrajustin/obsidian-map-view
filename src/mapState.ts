@@ -2,6 +2,15 @@ import { WorkspaceLeaf } from 'obsidian';
 import * as leaflet from 'leaflet';
 import * as querystring from 'query-string';
 
+export type CustomMarkerState = {
+    id: string;
+    desc: string;
+    lat: number;
+    lng: number;
+    iconOptions: leaflet.ExtraMarkers.IconOptions;
+    docId: string
+};
+
 /** Represents a logical state of the map, in separation from the map display */
 export type MapState = {
     name: string;
@@ -19,6 +28,9 @@ export type MapState = {
     autoFit?: boolean;
     /** Do not allow panning & zooming the map */
     lock?: boolean;
+
+    /** Custom settings */
+    customMarker?: CustomMarkerState[]
 };
 
 /** Fields that are deprecated */
@@ -105,6 +117,7 @@ export function stateFromParsedUrl(obj: any) {
         ...(obj.embeddedHeight && {
             embeddedHeight: parseInt(obj.embeddedHeight),
         }),
+        customMarker: obj?.customMarker
     } as MapState;
 }
 

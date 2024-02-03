@@ -35,6 +35,7 @@ import {
     buildMarkers,
     buildAndAppendFileMarkers,
     finalizeMarkers,
+    CustomMarker,
 } from 'src/markers';
 import { getIconFromOptions } from 'src/markerIcons';
 import MapViewPlugin from 'src/main';
@@ -53,6 +54,7 @@ import {
     isSame,
 } from 'src/realTimeLocation';
 import * as menus from 'src/menus';
+import { createCustomMarkers } from './customMarker';
 
 export type ViewSettings = {
     showZoomButtons: boolean;
@@ -572,8 +574,11 @@ export class MapContainer {
             newMarkers = [];
             state.queryError = true;
         }
+        const customMarkers = createCustomMarkers(this.app, state);
+        newMarkers = [...newMarkers, ...customMarkers];
         finalizeMarkers(newMarkers, this.settings, this.plugin.iconCache);
         this.state = structuredClone(state);
+        // Custom markers
         this.updateMapMarkers(newMarkers);
         // There are multiple layers of safeguards here, in an attempt to minimize the cases where a series
         // of interactions and async updates compete over the map.
@@ -639,6 +644,17 @@ export class MapContainer {
                         'already exists, please open an issue if you see this.'
                     );
                 newMarkersMap.set(marker.id, marker);
+            } else if (marker instanceof CustomMarker) {
+                    // New marker - create it
+                    marker.geoLayer = this.newLeafletCustomMarker(marker);
+                    markersToAdd.push(marker.geoLayer);
+                    if (newMarkersMap.get(marker.id))
+                        console.log(
+                            'Map view: warning, marker ID',
+                            marker.id,
+                            'already exists, please open an issue if you see this.'
+                        );
+                    newMarkersMap.set(marker.id, marker);
             }
         }
         for (let [key, value] of this.display.markers) {
@@ -695,6 +711,36 @@ export class MapContainer {
                     ev.stopPropagation();
                 });
         });
+        return newMarker;
+    }
+
+    private newLeafletCustomMarker(marker: CustomMarker): leaflet.Marker {
+        let newMarker = leaflet.marker(marker.location, {
+            icon: marker.icon || new leaflet.Icon.Default(),
+        });
+        newMarker.on('click', (event: leaflet.LeafletMouseEvent) => {
+            this.showCustomMarkerPopups(marker, newMarker);
+        });
+        newMarker.on('mousedown', (event: leaflet.LeafletMouseEvent) => {
+            // Middle click is supported only on mousedown and not on click, so we're checking for it here
+            if (event.originalEvent.button === 1)
+                this.showCustomMarkerPopups(marker, newMarker);
+        });
+        newMarker.on('mouseover', (event: leaflet.LeafletMouseEvent) => {
+            if (!utils.isMobile(this.app))
+                this.showCustomMarkerPopups(marker, newMarker);
+        });
+        newMarker.on('mouseout', (event: leaflet.LeafletMouseEvent) => {
+            if (!utils.isMobile(this.app)) newMarker.closePopup();
+        });
+        // newMarker.on('add', (event: leaflet.LeafletEvent) => {
+        //     newMarker
+        //         .getElement()
+        //         .addEventListener('contextmenu', (ev: MouseEvent) => {
+        //             this.openMarkerContextMenu(marker, newMarker, ev);
+        //             ev.stopPropagation();
+        //         });
+        // });
         return newMarker;
     }
 
@@ -779,6 +825,27 @@ export class MapContainer {
                             true
                         );
                     });
+                })
+                .openPopup()
+                .on('popupclose', (event: leaflet.LeafletEvent) => {
+                    // For some reason popups don't recycle on mobile if this is not added
+                    mapMarker.unbindPopup();
+                });
+        }
+    }
+
+    private showCustomMarkerPopups(
+        marker: CustomMarker,
+        mapMarker: leaflet.Marker
+    ) {
+        if (this.settings.showNoteNamePopup) {
+            let content = `<p class="map-view-marker-name">${marker.markerConfig.id}</p>`;
+                content += `<p class="map-view-marker-sub-name">${marker.markerConfig.desc}</p>`;
+            mapMarker
+                .bindPopup(content, {
+                    closeButton: true,
+                    autoPan: false,
+                    className: 'marker-popup',
                 })
                 .openPopup()
                 .on('popupclose', (event: leaflet.LeafletEvent) => {

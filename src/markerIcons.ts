@@ -20,6 +20,7 @@ export function getIconFromRules(
             result = Object.assign({}, result, rule.iconDetails);
         }
     }
+    console.log('getIconFromRules', result);
     return getIconFromOptions(result, iconCache);
 }
 
